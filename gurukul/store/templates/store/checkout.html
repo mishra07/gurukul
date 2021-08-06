@@ -1,0 +1,72 @@
+{% extends 'store/base.html' %}
+{% load store_tags %}
+{% block content %}
+<br>
+<div class="container">
+    <h1 class="">Check Out</h1>
+    <hr>
+
+    <div class="mt-3">
+        <div class="row">
+            <div class="col p-4">
+                <div class="p-4">
+                    <img class="img-fluid shadow" src="{{product.thumbnail.url}}" alt="">
+                </div>
+            </div>
+            <div class="col">
+                <div>
+                    <h1 class="display-5">{{product.name}}</h1>
+                    <p>{{product.category}}</p>
+                    <p>Save {{product.discount}}%</p>
+                    <p><del>Rs. {{product.price}}</del>&nbsp; </p>
+
+                    <p style="font-size: 20px;">
+                        Payable Amount : Rs. {% sale_price product.price product.discount %}
+                    </p>
+
+                    <form action="/payment/{{product.slug}}" method="post">
+                        {%csrf_token%}
+                        {{form.as_p}}
+
+                        <input class="btn btn-light border shandow" type="submit" value="Continue to Checkout">
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% if show_payment_dialog %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    window.onload = function () {
+        var options = {
+            "key": "{{RAZOPRPAY_KEY}}",
+            "name": "Feel Free To Code",
+            "description": "Description Of the Product",
+            "image": "https://example.com/your_logo",
+            "order_id": '{{order.id}}',
+            "callback_url": "{{PAYMENT_CALLBACK_URL}}",
+            "prefill": {
+                "name": '{{user.first_name}}',
+                "email": '{{user.email}}',
+                "contact": "1234567890"
+            },
+        }
+
+        var rzp1 = new Razorpay(options);
+
+        rzp1.open()
+
+
+
+    }
+</script>
+{%endif %}
+
+{% endblock %}

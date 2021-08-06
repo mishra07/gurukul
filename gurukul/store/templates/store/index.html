@@ -1,0 +1,96 @@
+{% extends 'store/base.html' %}
+{% load store_tags %}
+{% block content %}
+<div class="container-fluid">
+
+
+    <div class="row mt-3">
+        <div id='categories' class="col-2">
+
+            <div class="list-group">
+
+                <a class="list-group-item list-group-item-action
+                    {% get_active_class request.GET.category '' %}" href="/">
+                    All Categories
+                </a>
+
+                {% for category in categories %}
+
+                <a class="list-group-item list-group-item-action
+                        {% get_active_class request.GET.category category.id %}
+                        " href="?category={{category.pk}}">
+                    {{category.title}}
+                </a>
+
+                {% endfor %}
+            </div>
+        </div>
+        <div id='products' class="col">
+
+            <div class="row">
+                {% for product in page_obj %}
+
+                <div class="col-3">
+                    <div class="card">
+                        <img src="{{product.thumbnail.url}}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{product.name}}</h5>
+                            <p class="card-text">
+                                Save {{product.discount}}%
+                                <br>
+                                <span><del>Rs.{{product.price}}</del></span>
+
+                                <span>Rs. {% sale_price product.price product.discount %}</span>
+                            </p>
+
+                        </div>
+
+                        <div class="card-footer d-grid p-0">
+                            <a href="/product/{{product.slug}}" class="btn border btn-light btn-block m-0">Show More</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="mt-3">
+                <nav aria-label="...">
+                    <ul class="pagination justify-content-center">
+                        <!-- prev button -->
+                        {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{page_obj.previous_page_number}}">&lt;&lt;</a>
+                        </li>
+                        {% endif %}
+
+                        <!-- current buitton -->
+                        <li class="page-item"><a class="page-link" href="javascript:void(0);">Page
+                                {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</a>
+                        </li>
+
+                        <!-- next Button -->
+                        {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{page_obj.next_page_number}}">&gt;&gt;</a>
+                        </li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{page_obj.paginator.num_pages}}">Last</a>
+                        </li>
+                        {% endif %}
+
+
+                    </ul>
+                </nav>
+            </div>
+
+
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
